@@ -3,10 +3,10 @@
     <el-form  :rules="rules" ref="form" :model="form" label-width="80px">
       <img src="../assets/timg.jpeg" alt />
       <el-form-item  label="用户名" prop="username">
-        <el-input   v-model="form.username"></el-input>
+        <el-input  @keyup.enter.native="login" v-model="form.username"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input type="password" v-model="form.password"></el-input>
+        <el-input  @keyup.enter.native="login" type="password" v-model="form.password"></el-input>
       </el-form-item>
       <el-button @click='login' type="primary">登陆</el-button>
       <el-button @click='reset'>重置</el-button>
@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
   data () {
     return {
@@ -42,9 +41,8 @@ export default {
     login () {
       this.$refs.form.validate(valid => {
         if (!valid) return
-        axios.post('http://localhost:8888/api/private/v1/login', this.form).then(res => {
-          console.log(res.data)
-          const { meta, data } = res.data
+        this.$axios.post('login', this.form).then(res => {
+          const { meta, data } = res
           if (meta.status === 400) {
             this.$message({
               message: '登陆失败',
@@ -67,7 +65,7 @@ export default {
 }
 </script>
 
-<style lang='scss'>
+<style lang='scss' >
 * {
   margin: 0;
   padding: 0;
@@ -82,8 +80,7 @@ body,
 .login {
   background-color: #2d434c;
   overflow: hidden;
-}
-.el-form {
+  .el-form {
   padding: 75px 20px 20px;
   margin: 0 auto;
   margin-top: 200px;
@@ -106,4 +103,6 @@ body,
     border: 5px solid orange;
   }
 }
+}
+
 </style>
