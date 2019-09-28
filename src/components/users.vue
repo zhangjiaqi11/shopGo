@@ -32,7 +32,7 @@
         <template v-slot:default="obj">
           <el-button type="primary" @click="editShow(obj.row)" plain icon="el-icon-edit"></el-button>
           <el-button type="danger" @click="delUser(obj.row.id)" plain icon="el-icon-delete"></el-button>
-          <el-button type="success" plain icon="el-icon-check">分配角色</el-button>
+          <el-button type="success" @click="showAssignDia(obj.row)" plain icon="el-icon-check">分配角色</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -70,7 +70,7 @@
       </span>
     </el-dialog>
      <!-- 修改对话框 -->
-    <el-dialog   title="添加用户" :visible.sync="editVisible" width="40%">
+    <el-dialog   title="修改用户" :visible.sync="editVisible" width="40%">
       <el-form :rules="rules" ref="editForm" :model="editForm"  label-width="80px">
         <el-form-item label="用户名" >
          <el-tag type="info">{{editForm.username}}</el-tag>
@@ -88,6 +88,28 @@
         <el-button type="primary" @click="editUser()">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 分配对话框 -->
+    <el-dialog   title="分配角色" :visible.sync="assignVisible" width="40%">
+      <el-form  ref="assignForm" :model="assignForm"  label-width="80px">
+        <el-form-item label="用户名" >
+         <el-tag type="info">{{assignForm.username}}</el-tag>
+        </el-form-item>
+         <el-form-item  label="角色列表" >
+            <el-select v-model="assignForm.rid" placeholder="请选择">
+              <el-option
+                v-for="v in rolesList"
+                :key="v.id"
+                :label="v.roleName"
+                :value="v.id">
+              </el-option>
+            </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="assignVisible=false">取 消</el-button>
+        <el-button type="primary" @click="assignRole">分 配</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -96,12 +118,14 @@ export default {
   data () {
     return {
       usersList: [],
+      rolesList: [],
       total: 0,
       query: '',
       pagenum: 1,
       pagesize: 2,
       dialogVisible: false,
       editVisible: false,
+      assignVisible: false,
       form: {
         username: '',
         password: '',
@@ -113,6 +137,11 @@ export default {
         id: '',
         email: '',
         mobile: ''
+      },
+      assignForm: {
+        username: '',
+        id: '',
+        rid: ''
       },
       rules: {
         username: [
@@ -249,6 +278,37 @@ export default {
         }
       } catch (e) {
         console.log(e)
+      }
+    },
+    async showAssignDia (row) {
+      this.assignVisible = true
+      this.assignForm.username = row.username
+      const { meta, data } = await this.$axios.get('roles')
+      if (meta.status === 200) {
+        this.rolesList = data
+        this.assignForm.id = row.id
+        const res = await this.$axios.get(`users/${row.id}`)
+        if (res.meta.status === 200) {
+          if (res.data.rid === -1) {
+            res.data.rid = ''
+          }
+          this.assignForm.rid = res.data.rid
+        } else {
+          this.$message.error(res.meta.msg)
+        }
+      } else {
+        this.$message.error(meta.msg)
+      }
+    },
+    async assignRole () {
+      const { id, rid } = this.assignForm
+      const { meta } = await this.$axios.put(`users/${id}/role`, { rid })
+      if (meta.status === 200) {
+        this.$message.success('分配角色成功')
+        this.assignVisible = false
+        this.getuserlist()
+      } else {
+        this.$message.error(meta.msg)
       }
     }
   },
