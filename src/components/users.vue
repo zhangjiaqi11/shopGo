@@ -282,7 +282,5 @@ export default {
     padding: 20px 0;
   }
 }
-.el-breadcrumb {
-  padding: 20px 0;
-}
+
 </style>
