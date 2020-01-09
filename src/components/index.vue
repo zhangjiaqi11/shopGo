@@ -2,7 +2,7 @@
   <el-container class="index">
     <el-header>
       <div class="logo">
-        <img src="../assets/logo.png" alt />
+        <img src="../assets/logo.jpeg" alt />
       </div>
       <div class="title">
         <h1>电商后台管理系统</h1>
@@ -96,8 +96,8 @@ export default {
     .logo {
       width: 180px;
       img {
-        height: 40px;
-        margin: 10px;
+        float: left;
+        height: 100%;
       }
     }
     .title {
