@@ -4,10 +4,23 @@ import 'element-ui/lib/theme-chalk/index.css'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
+import moment from 'moment'
+import VueQuillEditor from 'vue-quill-editor'
+
+// require styles
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
+Vue.use(VueQuillEditor /* { default global options } */)
 Vue.prototype.$axios = axios
 Vue.use(ElementUI)
+Vue.use(moment)
 Vue.config.productionTip = false
 
+Vue.filter('time', (val) => {
+  return moment(val * 1000).format('YY-MM-DD HH:mm:ss')
+})
 axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {

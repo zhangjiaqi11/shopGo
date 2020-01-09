@@ -1,7 +1,6 @@
 <template>
   <div class="login">
-    <el-form  :rules="rules" ref="form" :model="form" label-width="80px">
-      <img src="../assets/timg.jpeg" alt />
+    <el-form  :rules="rules" ref='form' :model="form" label-width="80px">
       <el-form-item  label="用户名" prop="username">
         <el-input  @keyup.enter.native="login" v-model="form.username"></el-input>
       </el-form-item>
@@ -75,7 +74,7 @@ body,
   width: 100%;
 }
 .login {
-  background-color: #2d434c;
+  background:url(../assets/timg.jpeg);
   overflow: hidden;
   .el-form {
   padding: 75px 20px 20px;

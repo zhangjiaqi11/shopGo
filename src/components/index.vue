@@ -17,33 +17,23 @@
         <el-menu
           router
           unique-opened
-          default-active="2"
+          :default-active="defaultAct"
           class="el-menu-vertical-demo"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
+
         >
-          <el-submenu index="1">
+          <el-submenu :index="v1.path" v-for="v1 in leftUserList" :key="v1.id" >
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>{{v1.authName}}</span>
             </template>
-            <el-menu-item index="/users">
-              <i class="el-icon-menu"></i> 用户列表
+            <el-menu-item :index="v2.path" v-for="v2 in v1.children" :key="v2.id">
+              <i class="el-icon-menu"></i> {{v2.authName}}
             </el-menu-item>
           </el-submenu>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>权限管理</span>
-            </template>
-            <el-menu-item index="/roles">
-              <i class="el-icon-menu"></i> 角色列表
-            </el-menu-item>
-            <el-menu-item index="/rights">
-              <i class="el-icon-menu"></i> 权限列表
-            </el-menu-item>
-          </el-submenu>
+
         </el-menu>
       </el-aside>
 
@@ -57,6 +47,25 @@
 
 <script>
 export default {
+  data () {
+    return {
+      leftUserList: []
+    }
+  },
+  async created () {
+    const { meta, data } = await this.$axios.get('menus')
+    if (meta.status === 200) {
+      this.leftUserList = data
+    } else {
+      this.$message.error(meta.msg)
+    }
+  },
+  computed: {
+    defaultAct () {
+      console.log(this.$route.path)
+      return this.$route.path.slice(1).split('A')[0]
+    }
+  },
   methods: {
     loginout () {
       this.$confirm('确定退出吗', '亲', {

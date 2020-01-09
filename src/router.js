@@ -1,10 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import login from './components/login'
-import index from './components/index'
-import users from './components/users'
-import roles from './components/roles'
-import rights from './components/rights'
+// const login = () => import(/* webpackChunkName:"index" */'./components/login')
+// const index = () => import(/* webpackChunkName:"index" */'./components/index')
+// const users = () => import(/* webpackChunkName:"users" */'./components/user/users')
+// const roles = () => import(/* webpackChunkName:"rights" */'./components/rights/roles')
+// const rights = () => import(/* webpackChunkName:"rights" */'./components/rights/rights')
+// const categories = () => import(/* webpackChunkName:"product" */'./components/products/categories')
+// const goods = () => import(/* webpackChunkName:"product" */'./components/products/goods')
+// const goodsAdd = () => import(/* webpackChunkName:"product" */'./components/products/goodsAdd')
 Vue.use(Router)
 
 const router = new Router({
@@ -15,23 +18,35 @@ const router = new Router({
     },
     {
       path: '/login',
-      component: login
+      component: () => import(/* webpackChunkName:"index" */'./components/login')
     },
     {
       path: '/index',
-      component: index,
+      component: () => import(/* webpackChunkName:"index" */'./components/index'),
       children: [
         {
           path: '/users',
-          component: users
+          component: () => import(/* webpackChunkName:"users" */'./components/user/users')
         },
         {
           path: '/roles',
-          component: roles
+          component: () => import(/* webpackChunkName:"rights" */'./components/rights/roles')
         },
         {
           path: '/rights',
-          component: rights
+          component: () => import(/* webpackChunkName:"rights" */'./components/rights/rights')
+        },
+        {
+          path: '/categories',
+          component: () => import(/* webpackChunkName:"products" */'./components/products/categories')
+        },
+        {
+          path: '/goods',
+          component: () => import(/* webpackChunkName:"products" */'./components/products/goods')
+        },
+        {
+          path: '/goodsAdd',
+          component: () => import(/* webpackChunkName:"products" */'./components/products/goodsAdd')
         }
       ]
     }
@@ -39,6 +54,7 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
+  console.log(next)
   if (to.path === '/login' || localStorage.getItem('token')) {
     next()
   } else {
