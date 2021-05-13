@@ -1,4 +1,4 @@
-# shop-48
+
 
 ## Project setup
 ```
